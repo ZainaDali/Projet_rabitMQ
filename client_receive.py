@@ -24,8 +24,11 @@ def callback(ch, method, properties, body):
         if n1 is None or n2 is None or op is None or result is None:
             print("[!] Message incomplet reçu :", data)
         else:
-            # Afficher le calcul réalisé
-            print(f"==> {n1} {op} {n2} = {result}")
+            if result == 'DivisionByZero':
+                print(f"==> {n1} {op} {n2} = Erreur : Division par zéro")
+            else:
+                print(f"==> {n1} {op} {n2} = {result}")
+            print("-" * 40)
 
     except Exception as e:
         print("[!] Erreur lors du décodage du message :", str(e))

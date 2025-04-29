@@ -28,7 +28,7 @@ def generate_message():
 while True:
     message = generate_message()
     channel.basic_publish(exchange='',
-                          routing_key='calculs',
+                          routing_key='calculsZI_DZ',
                           body=json.dumps(message))
     print(f"Envoyé: {message}")
     time.sleep(random.uniform(2, 5))

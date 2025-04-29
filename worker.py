@@ -45,7 +45,7 @@ def callback(ch, method, properties, body):
         if op != operation_type:
             print(f"[!] Opération ignorée")
             # print(f"[!] Opération {op} ignorée par ce worker {operation_type}.")
-            # ch.basic_ack(delivery_tag=method.delivery_tag)
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             return
 
         # Simuler un calcul complexe
