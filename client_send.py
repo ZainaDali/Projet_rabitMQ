@@ -9,7 +9,7 @@ parameters = pika.ConnectionParameters('infoexpertise.hopto.org', 5672, '/', cre
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
-channel.queue_declare(queue='calculs')
+channel.queue_declare(queue='calculsZI_DZ')
 
 OPERATIONS = ['add', 'sub', 'mul', 'div', 'all']
 
