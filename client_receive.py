@@ -4,6 +4,7 @@ import json
 # Connexion à RabbitMQ
 credentials = pika.PlainCredentials('user', 'password')
 parameters = pika.ConnectionParameters('infoexpertise.hopto.org', 5672, '/', credentials)
+# parameters = pika.ConnectionParameters('localhost', 5673)
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 

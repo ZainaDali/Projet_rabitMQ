@@ -9,9 +9,10 @@ parameters = pika.ConnectionParameters('infoexpertise.hopto.org', 5672, '/', cre
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
-channel.queue_declare(queue='calculsZI_DZ')
+# Déclarer l'exchange direct
+channel.exchange_declare(exchange='calculs_exchange', exchange_type='direct')
 
-OPERATIONS = ['add', 'sub', 'mul', 'div', 'all']
+OPERATIONS = ['add', 'sub', 'mul', 'div','all']
 
 def generate_message():
     n1 = random.randint(1, 100)
@@ -27,8 +28,29 @@ def generate_message():
 
 while True:
     message = generate_message()
-    channel.basic_publish(exchange='',
-                          routing_key='calculsZI_DZ',
-                          body=json.dumps(message))
-    print(f"Envoyé: {message}")
-    time.sleep(random.uniform(2, 5))
+    
+    if message['op'] == 'all':
+        # Si c'est 'all', envoyer 4 messages séparés
+        for op in ['add', 'sub', 'mul', 'div']:
+            new_message = {
+                'n1': message['n1'],
+                'n2': message['n2'],
+                'op': op,
+                'request_id': message['request_id']
+            }
+            channel.basic_publish(
+                exchange='calculs_exchange',
+                routing_key=op,  # Envoie vers add, sub, mul, div
+                body=json.dumps(new_message)
+            )
+            print(f"Envoyé (ALL modifié) : {new_message}")
+    else:
+        # Sinon envoi classique
+        channel.basic_publish(
+            exchange='calculs_exchange',
+            routing_key=message['op'],
+            body=json.dumps(message)
+        )
+        print(f"Envoyé: {message}")
+
+    time.sleep(random.uniform(2, 10))
