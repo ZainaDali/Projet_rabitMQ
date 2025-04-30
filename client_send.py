@@ -22,7 +22,7 @@ def generate_message():
         'n1': n1,
         'n2': n2,
         'op': op,
-        'request_id': str(uuid.uuid4())
+        # 'request_id': str(uuid.uuid4())
     }
     return message
 
@@ -36,14 +36,14 @@ while True:
                 'n1': message['n1'],
                 'n2': message['n2'],
                 'op': op,
-                'request_id': message['request_id']
+                # 'request_id': message['request_id']
             }
             channel.basic_publish(
                 exchange='calculs_exchange',
                 routing_key=op,  # Envoie vers add, sub, mul, div
                 body=json.dumps(new_message)
             )
-            print(f"Envoyé (ALL modifié) : {new_message}")
+            print(f"Envoyé (ALL modifié) : {new_message}",flush=True)
     else:
         # Sinon envoi classique
         channel.basic_publish(
@@ -51,6 +51,6 @@ while True:
             routing_key=message['op'],
             body=json.dumps(message)
         )
-        print(f"Envoyé: {message}")
+        print(f"Envoyé: {message}",flush=True)
 
     time.sleep(random.uniform(2, 10))

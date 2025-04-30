@@ -5,15 +5,15 @@ import random
 import sys
 
 if len(sys.argv) != 2:
-    print("Utilisation : python worker.py [add|sub|mul|div]")
+    print("Utilisation : python worker.py [add|sub|mul|div]",flush=True)
     sys.exit(1)
 
 operation_type = sys.argv[1]
 if operation_type not in ['add', 'sub', 'mul', 'div']:
-    print("Erreur : opération non reconnue.")
+    print("Erreur : opération non reconnue.",flush=True)
     sys.exit(1)
 
-print(f"[*] Worker pour : {operation_type}")
+print(f"[*] Worker pour : {operation_type}",flush=True)
 
 credentials = pika.PlainCredentials('user', 'password')
 parameters = pika.ConnectionParameters('infoexpertise.hopto.org', 5672, '/', credentials)
@@ -34,10 +34,10 @@ def callback(ch, method, properties, body):
         data = json.loads(body)
         n1 = data.get('n1')
         n2 = data.get('n2')
-        request_id = data.get('request_id')
+        # request_id = data.get('request_id')
 
         wait_time = random.randint(5, 15)
-        print(f"[x] {operation_type.upper()} {n1} et {n2}... ({wait_time}s)")
+        print(f"[x] {operation_type.upper()} {n1} et {n2}... ({wait_time}s)",flush=True)
         time.sleep(wait_time)
 
         if operation_type == 'add':
@@ -54,7 +54,7 @@ def callback(ch, method, properties, body):
             "n2": n2,
             "op": operation_type,
             "result": result,
-            "request_id": request_id
+            # "request_id": request_id
         }
 
         channel.basic_publish(
@@ -62,14 +62,14 @@ def callback(ch, method, properties, body):
             routing_key='calcul_results_ZI_DZ',
             body=json.dumps(response)
         )
-        print(f"[✓] Résultat envoyé : {response}")
+        print(f"[ok] Résultat envoyé : {response}",flush=True)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     except Exception as e:
-        print("[!] Erreur:", e)
+        print("[!] Erreur:", e,flush=True)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue=queue_name, on_message_callback=callback)
-print(f"[*] En attente de messages dans la queue '{queue_name}'...")
+print(f"[*] En attente de messages dans la queue '{queue_name}'...",flush=True)
 channel.start_consuming()
